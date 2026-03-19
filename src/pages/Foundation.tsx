@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Heart, Users, Droplets, GraduationCap, Activity, Sprout, MapPin, Download } from "lucide-react";
+import { ArrowLeft, Heart, Users, Droplets, GraduationCap, Activity, Sprout, MapPin, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -175,6 +175,18 @@ const statusColors: Record<string, string> = {
 
 const Foundation = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const [carouselImageIndex, setCarouselImageIndex] = useState(0);
+
+  const carouselImages = [f2, f4, f6, f8, f10];
+
+  // Auto-advance carousel every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCarouselImageIndex((prev) => (prev === carouselImages.length - 1 ? 0 : prev + 1));
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   const mediaImages = [f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20, f21, f22, f23, f24, f25, f26, f27, f28, f29, f30, f31, f32, f33, f34, f35, f36, f37, f38, f39, f40, f41, f42, f43, f44, f45, f46, f47, f48, f49, f50, f51, f52, f53, f54, f55, f56, f57, f58, f59, f60, f61, f62, f63, f64, f65, f66, f67, f68, f69, f70, f71, f72, f73, f74, f75, f76, f77, f78, f79, f80, f81, f82, f83, f84, f85, f86, f87, f88, f89, f90, f91, f92, f93, f94, f95, f96, f97, f98, f99, f100, f101, f102, f103, f104, f105, f106, f107];
 
   const handleDownloadImage = async () => {
@@ -220,43 +232,93 @@ const Foundation = () => {
   return (
     <>
       <Navbar />
-      <main className="pt-24">
+      <main>
         {/* Hero */}
-        <section className="section-container pb-12">
-          <motion.div {...fadeIn}>
-            <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
-              <ArrowLeft size={16} /> Back to Home
-            </Link>
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-3 rounded-xl bg-secondary/10">
-                <Heart size={28} className="text-secondary" />
+        <section className="relative w-full min-h-[600px] md:min-h-[700px] flex items-center justify-center overflow-hidden">
+          {/* Background Image with Gradient Overlay */}
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${f1})`,
+              opacity: 0.3,
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-transparent" />
+
+          {/* Content */}
+          <div className="section-container relative z-10 py-16 md:py-24">
+            <motion.div {...fadeIn}>
+              <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
+                <ArrowLeft size={16} /> Back to Home
+              </Link>
+              <div className="flex items-center gap-3 mb-12">
+                <div className="p-3 rounded-xl bg-secondary/10">
+                  <Heart size={28} className="text-secondary" />
+                </div>
+                <div>
+                  <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight">
+                    Sharaf Mahama <span className="text-secondary">Foundation</span>
+                  </h1>
+                </div>
               </div>
-              <div>
-                <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight">
-                  Sharaf Mahama <span className="text-secondary">Foundation</span>
-                </h1>
-              </div>
+            </motion.div>
+
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+              <motion.div {...slideInLeft}>
+                <p className="text-lg text-foreground leading-relaxed mb-6">
+                  Sharaf Mahama Foundation is a humanitarian organization dedicated to transforming lives and uplifting underserved communities across Ghana through sustainable and impactful interventions. With a strong focus on healthcare, education, clean water access, and community development, the foundation is committed to addressing some of the most pressing social challenges facing vulnerable populations.
+                </p>
+                <p className="text-lg text-foreground leading-relaxed">
+                  Founded by Sharaf Mahama, the foundation operates with a people-centered approach—designing programs that respond directly to the needs of communities while promoting long-term self-reliance. Its initiatives range from medical outreach programs and educational support to the provision of boreholes and essential infrastructure in deprived areas.
+                </p>
+              </motion.div>
+
+              <motion.div {...slideInRight}>
+                <div className="relative w-full h-[380px] rounded-lg overflow-hidden bg-muted">
+                  {/* Image */}
+                  <motion.img
+                    key={carouselImageIndex}
+                    src={carouselImages[carouselImageIndex]}
+                    alt={`Foundation moment ${carouselImageIndex + 1}`}
+                    className="w-full h-full object-cover"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                  />
+                  
+                  {/* Navigation Buttons */}
+                  <button
+                    onClick={() => setCarouselImageIndex((prev) => (prev === 0 ? carouselImages.length - 1 : prev - 1))}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+                  <button
+                    onClick={() => setCarouselImageIndex((prev) => (prev === carouselImages.length - 1 ? 0 : prev + 1))}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+
+                  {/* Image indicators */}
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2">
+                    {carouselImages.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCarouselImageIndex(index)}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          index === carouselImageIndex ? "bg-white w-6" : "bg-white/50"
+                        }`}
+                        aria-label={`Go to image ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
             </div>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-            <motion.div {...slideInLeft}>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                Sharaf Mahama Foundation is a humanitarian organization dedicated to transforming lives and uplifting underserved communities across Ghana through sustainable and impactful interventions. With a strong focus on healthcare, education, clean water access, and community development, the foundation is committed to addressing some of the most pressing social challenges facing vulnerable populations.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Founded by Sharaf Mahama, the foundation operates with a people-centered approach—designing programs that respond directly to the needs of communities while promoting long-term self-reliance. Its initiatives range from medical outreach programs and educational support to the provision of boreholes and essential infrastructure in deprived areas.
-              </p>
-            </motion.div>
-
-            <motion.div {...slideInRight}>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                At its core, the Sharaf Mahama Foundation prioritizes sustainability and measurable impact. Rather than short-term aid, it invests in solutions that create lasting change—empowering individuals, strengthening communities, and improving quality of life for future generations.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Through strategic partnerships, volunteer engagement, and community-driven projects, the foundation continues to expand its reach, making a meaningful difference in the lives of thousands across Ghana while inspiring hope, resilience, and opportunity.
-              </p>
-            </motion.div>
           </div>
         </section>
 

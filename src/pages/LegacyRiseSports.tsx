@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
-import { ArrowLeft, MapPin, Calendar, Users, Ticket, Trophy, Target, Zap, Download } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, Users, Ticket, Trophy, Target, Zap, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -26,6 +26,7 @@ import h12 from "@/assets/h (12).jpg";
 import h13 from "@/assets/h (13).jpg";
 import h14 from "@/assets/h (14).jpg";
 import h15 from "@/assets/h (15).jpg";
+import h41 from "@/assets/h (41).jpg";
 import ho1 from "@/assets/ho (1).jpg";
 import ho2 from "@/assets/ho (2).jpg";
 
@@ -81,6 +82,17 @@ const LegacyRiseSports = () => {
   const [bookingEventId, setBookingEventId] = useState<string | null>(null);
   const [bookingForm, setBookingForm] = useState({ full_name: "", email: "", phone: "", num_tickets: 1 });
   const [submitting, setSubmitting] = useState(false);
+  const [carouselImageIndex, setCarouselImageIndex] = useState(0);
+
+  const carouselImages = [h2, h4, h6, h8, h10];
+
+  // Auto-advance carousel every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCarouselImageIndex((prev) => (prev === carouselImages.length - 1 ? 0 : prev + 1));
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleDownloadImage = async () => {
     if (selectedImageIndex === null) return;
@@ -164,43 +176,92 @@ const LegacyRiseSports = () => {
   return (
     <>
       <Navbar />
-      <main className="pt-24">
+      <main>
         {/* Hero */}
-        <section className="section-container pb-12">
-          <motion.div {...fadeIn}>
-            <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
-              <ArrowLeft size={16} /> Back to Home
-            </Link>
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-3 rounded-xl bg-primary/10">
-                <Trophy size={28} className="text-primary" />
+        <section className="relative w-full min-h-[600px] md:min-h-[700px] flex items-center justify-center overflow-hidden">
+          {/* Background Image */}
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${h41})`,
+            }}
+          />
+          {/* Gradient Overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-background/40 to-transparent" />
+
+          {/* Content */}
+          <div className="section-container relative z-10 py-16 md:py-24">
+            <motion.div {...fadeIn}>
+              <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
+                <ArrowLeft size={16} /> Back to Home
+              </Link>
+              <div className="flex items-center gap-3 mb-12">
+                <div className="p-3 rounded-xl bg-primary/10">
+                  <Trophy size={28} className="text-primary" />
+                </div>
+                <div>
+                  <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight">
+                    Legacy Rise <span className="text-primary">Sports</span>
+                  </h1>
+                </div>
               </div>
-              <div>
-                <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight">
-                  Legacy Rise <span className="text-primary">Sports</span>
-                </h1>
-              </div>
+            </motion.div>
+
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+              <motion.div {...slideInLeft}>
+                <p className="text-lg text-foreground leading-relaxed mb-6">
+                  Legacy Rise Sports is a premier African sports promotion and talent development company dedicated to discovering, nurturing, and elevating athletic excellence across Ghana and the wider continent. With a clear vision to transform the sports industry, the organization serves as a bridge between grassroots talent and the global stage.
+                </p>
+                <p className="text-lg text-foreground leading-relaxed">
+                  Founded by Sharaf Mahama, Legacy Rise Sports focuses on identifying promising athletes at the community level and providing them with the resources, exposure, and professional guidance needed to succeed. Through structured development programs, scouting initiatives, and strategic partnerships, the company ensures that raw talent is refined into world-class performance.
+                </p>
+              </motion.div>
+
+              <motion.div {...slideInRight}>
+                <div className="relative w-full h-[380px] rounded-lg overflow-hidden bg-muted">
+                  {/* Image */}
+                  <motion.img
+                    key={carouselImageIndex}
+                    src={carouselImages[carouselImageIndex]}
+                    alt={`Legacy Rise moment ${carouselImageIndex + 1}`}
+                    className="w-full h-full object-cover"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                  />
+                  
+                  {/* Navigation Buttons */}
+                  <button
+                    onClick={() => setCarouselImageIndex((prev) => (prev === 0 ? carouselImages.length - 1 : prev - 1))}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+                  <button
+                    onClick={() => setCarouselImageIndex((prev) => (prev === carouselImages.length - 1 ? 0 : prev + 1))}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+
+                  {/* Image indicators */}
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2">
+                    {carouselImages.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCarouselImageIndex(index)}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          index === carouselImageIndex ? "bg-white w-6" : "bg-white/50"
+                        }`}
+                        aria-label={`Go to image ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
             </div>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-            <motion.div {...slideInLeft}>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                Legacy Rise Sports is a premier African sports promotion and talent development company dedicated to discovering, nurturing, and elevating athletic excellence across Ghana and the wider continent. With a clear vision to transform the sports industry, the organization serves as a bridge between grassroots talent and the global stage.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Founded by Sharaf Mahama, Legacy Rise Sports focuses on identifying promising athletes at the community level and providing them with the resources, exposure, and professional guidance needed to succeed. Through structured development programs, scouting initiatives, and strategic partnerships, the company ensures that raw talent is refined into world-class performance.
-              </p>
-            </motion.div>
-
-            <motion.div {...slideInRight}>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                Beyond talent discovery, Legacy Rise Sports plays a key role in sports promotion—organizing high-profile events, competitions, and showcases that spotlight African athletes while attracting international attention. The organization also offers consultancy services aimed at improving sports management, athlete branding, and infrastructure development.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Driven by innovation and a commitment to excellence, Legacy Rise Sports is not only building careers but also contributing to the growth of the sports ecosystem in Africa. Its mission goes beyond competition—empowering youth, creating opportunities, and positioning Africa as a powerhouse of global sporting talent.
-              </p>
-            </motion.div>
           </div>
         </section>
 
